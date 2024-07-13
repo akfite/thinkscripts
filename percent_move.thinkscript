@@ -1,0 +1,7 @@
+# Percent Move: the ratio between the strike and the underlying (% move to reach strike)
+
+def strike = GetStrike();
+def underlying = close(GetUnderlyingSymbol(), priceType = PriceType.LAST);
+def pct_move = (strike / underlying) - 1; # percent move
+
+AddLabel(yes, AsText(100 * pct_move, "%1$.1f%%"), color.white);
