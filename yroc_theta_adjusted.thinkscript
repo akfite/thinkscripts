@@ -40,7 +40,7 @@ if (IsPut()) {
 
 adjusted_return_on_capital = profit_ratio * return_on_capital;
 
-def theta = -Theta(); # selling, so we are long theta
+def theta = -Theta(); # selling, so we are short theta
 
 # approximate time for option to decay to X% of original value
 # (model time decay as a linear process; not perfect, but pretty close if not near expiry)
