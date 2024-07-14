@@ -5,13 +5,11 @@
 #
 
 # define constants
-def PROFIT_TARGET = 0.60; # [0-1], the percentage profit at which we will close
+input PROFIT_TARGET = 0.50; # [0-1], the percentage profit at which we will close
 
-def SPREAD_CROSSING_RATIO = 0.1; # assume we can do slightly better than the bid (0=sell to bid)
-def FEE_PER_CONTRACT = 0.45; # usually $0.65/contract unless you negotiate it
-def PUT_MARGIN_RATIO = 1; # [0-1]; 1 = no margin (value = Max(AVAILABLE_CASH / PUT_NOTIONAL_VALUE, 1))
-def TIME_EFFICIENCY = 1; # expected percent of year spent with a contract active
-# not going to consider selling naked calls here
+input SPREAD_CROSSING_RATIO = 0.1; # assume we can do slightly better than the bid (0=sell to bid)
+input FEE_PER_CONTRACT = 0.45; # usually $0.65/contract unless you negotiate it
+input PUT_MARGIN_RATIO = 1; # [0-1]; 1 = no margin (value = Max(AVAILABLE_CASH / PUT_NOTIONAL_VALUE, 1))
 
 # all further calculations are PER SHARE
 def spread = ask() - bid(); # option price spread
@@ -33,16 +31,12 @@ if (IsPut()) {
     # buying underlying shares & selling calls
     intrinsic_premium = Max(underlying - strike, 0);
     extrinsic_premium = total_premium - intrinsic_premium;
-    return_on_capital = extrinsic_premium;
+    return_on_capital = extrinsic_premium  / underlying;
 }
-
-adjusted_return_on_capital = PROFIT_TARGET * return_on_capital;
-
-def theta = -Theta(); # selling, so we are long theta
 
 # approximate time for option to decay to X% of original value
 # (model time decay as a linear process; not perfect, but pretty close if not near expiry)
-def premium_to_burn = DECAY_TARGET * extrinsic_premium;
-def days_to_decay_target = Max(0, premium_to_burn / theta);
+def premium_to_burn = PROFIT_TARGET * extrinsic_premium;
+def days_to_close = Max(0, AbsValue(premium_to_burn / Theta()));
 
-AddLabel(yes, AsText(days_to_decay_target, "%1$.1f%% d"), color.red);
+AddLabel(yes, AsText(days_to_close, "%1$.1f d"));
