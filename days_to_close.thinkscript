@@ -1,6 +1,7 @@
 # Days to Close
 #
-#   The expected number of days to reach a target percentage decay in premium.
+#   The expected number of days to reach a target percentage decay in premium
+#   (at which point we plan to take profits & close the contract).
 #
 
 # define constants
