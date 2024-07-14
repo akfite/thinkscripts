@@ -1,4 +1,8 @@
-# YROC (Yearly Return On Capital): the expected return relative to the capital tied up if sold all year
+# YROC (Yearly Return On Capital)
+# 
+#   The expected annualized return if the option were sold and held to expiry 
+#   repeatedly throughout a year.
+#
 
 # define constants
 def SPREAD_CROSSING_RATIO = 0.1; # assume we can do slightly better than the bid (0=sell to bid)

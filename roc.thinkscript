@@ -1,4 +1,8 @@
-# ROC (Return On Capital): the expected return relative to the capital tied up
+# ROC (Return On Capital)
+# 
+#   The expected return relative to the capital tied up.
+#
+
 # note: this assumes the share price has not changed at expiry
 
 # define constants

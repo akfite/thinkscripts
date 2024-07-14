@@ -1,4 +1,7 @@
-# Percent Move: the ratio between the strike and the underlying (% move to reach strike)
+# Percent Move
+#
+#   The percentage rise or fall to reach the strike price (from the current price)
+#
 
 def strike = GetStrike();
 def underlying = close(GetUnderlyingSymbol(), priceType = PriceType.LAST);
