@@ -18,7 +18,7 @@ def spread = ask() - bid(); # option price spread
 def strike = GetStrike();
 def underlying = close(GetUnderlyingSymbol(), priceType = PriceType.LAST);
 
-def total_premium = bid() + (SPREAD_CROSSING_RATIO * spread) - (FEE_PER_CONTRACT / 100);
+def total_premium = bid() + (SPREAD_CROSSING_RATIO * spread) - (2 * FEE_PER_CONTRACT / 100); # fee to open & close
 def intrinsic_premium;
 def extrinsic_premium;
 def return_on_capital;
