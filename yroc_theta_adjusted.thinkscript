@@ -13,11 +13,12 @@ input PUT_MARGIN_RATIO = 1; # [0-1]; 1 = no margin (value = Max(AVAILABLE_CASH /
 input TIME_EFFICIENCY = 1; # expected percent of year spent with a contract active
 
 # all further calculations are PER SHARE
-def spread = ask() - bid(); # option price spread
+def bid_ = bid(); # avoid calling this a ton of times
+def spread = ask() - bid_; # option price spread
 def strike = GetStrike();
 def underlying = close(GetUnderlyingSymbol(), priceType = PriceType.LAST);
 
-def total_premium = bid() + (SPREAD_CROSSING_RATIO * spread) - (2 * FEE_PER_CONTRACT / 100); # fee to open & close
+def total_premium = bid_ + (SPREAD_CROSSING_RATIO * spread) - (2 * FEE_PER_CONTRACT / 100); # fee to open & close
 def intrinsic_premium;
 def extrinsic_premium;
 def return_on_capital;
@@ -27,12 +28,12 @@ if (IsPut()) {
     # selling puts
     intrinsic_premium = Max(strike - underlying, 0);
     extrinsic_premium = total_premium - intrinsic_premium;
-    return_on_capital = extrinsic_premium / (strike * PUT_MARGIN_RATIO);
+    return_on_capital = Max(extrinsic_premium / (strike * PUT_MARGIN_RATIO), 0); # clamp to [0, inf]
 } else {
     # buying underlying shares & selling calls
     intrinsic_premium = Max(underlying - strike, 0);
     extrinsic_premium = total_premium - intrinsic_premium;
-    return_on_capital = extrinsic_premium  / underlying;
+    return_on_capital = Max(extrinsic_premium  / underlying, 0); # clamp to [0, inf]
 }
 
 def adjusted_return_on_capital = PROFIT_TARGET * return_on_capital;

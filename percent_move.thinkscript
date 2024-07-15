@@ -7,4 +7,5 @@ def strike = GetStrike();
 def underlying = close(GetUnderlyingSymbol(), priceType = PriceType.LAST);
 def pct_move = (strike / underlying) - 1; # percent move
 
-AddLabel(yes, AsText(100 * pct_move, "%1$.1f%%"), color.white);
+AddLabel(pct_move < 0, AsText(100 * pct_move, "%1$.1f%%"), color.red);
+AddLabel(pct_move >= 0, AsText(100 * pct_move, "%1$.1f%%"), color.green);
