@@ -38,12 +38,10 @@ if (IsPut()) {
 
 def adjusted_return_on_capital = PROFIT_TARGET * return_on_capital;
 
-def theta = -Theta();
-
 # approximate time for option to decay to X% of original value
 # (model time decay as a linear process; not perfect, but pretty close if not near expiry)
 def premium_to_burn = PROFIT_TARGET * extrinsic_premium;
-def days_to_decay_target = Max(0, premium_to_burn / theta);
+def days_to_decay_target = Max(0, premium_to_burn / -Theta());
 # def days_to_expiry = GetDaysToExpiration();
 
 # annualized rate assumes compounding returns
