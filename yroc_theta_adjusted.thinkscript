@@ -38,7 +38,7 @@ if (IsPut()) {
 
 def adjusted_return_on_capital = PROFIT_TARGET * return_on_capital;
 
-def theta = -Theta(); # selling, so we are short theta
+def theta = -Theta();
 
 # approximate time for option to decay to X% of original value
 # (model time decay as a linear process; not perfect, but pretty close if not near expiry)
