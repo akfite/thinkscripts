@@ -39,17 +39,23 @@ if (IsPut()) {
 # annualized rate assumes compounding returns
 def DAYS_PER_YEAR = 365;
 def WEEKS_PER_YEAR = 52;
-def active_days_per_year;
 def dte = GetDaysToExpiration();
 def is_weekly = dte <= 5;
 
+def active_days_per_year;
+
 if (is_weekly) {
+    # for weeklies, assume we're making at most 2 sales per week
     active_days_per_year = DAYS_PER_YEAR - (WEEKS_PER_YEAR * 2);
 } else {
-    active_days_per_year = 365;
+    # 100% activity is baseline assumption for longer-term options
+    active_days_per_year = DAYS_PER_YEAR;
 }
 
-def n_sales_per_year = time_efficiency * (active_days_per_year / dte);
+# assume 1 trade per week at most if we're not selling before expiry
+def n_sales_per_year = Min(WEEKS_PER_YEAR, TIME_EFFICIENCY * (active_days_per_year / dte));
+
+# assume at max we trade weeklies, which won't be traded multiple times per week
 def annual_roc = Power(1 + return_on_capital, n_sales_per_year) - 1;
 
 AddLabel(yes, AsText(100 * annual_roc, "%1$.2f%%"), color.green);

@@ -39,25 +39,30 @@ if (IsPut()) {
 def adjusted_return_on_capital = PROFIT_TARGET * return_on_capital;
 
 # approximate time for option to decay to X% of original value
-# (model time decay as a linear process; not perfect, but pretty close if not near expiry)
+# (model time decay as a linear process and set a floor on the hold time to prevent
+# math from blowing up on weeklies)
+def MIN_HOLD_TIME_DAYS = 1;
 def premium_to_burn = PROFIT_TARGET * extrinsic_premium;
-def days_to_decay_target = Max(0, premium_to_burn / -Theta());
-# def days_to_expiry = GetDaysToExpiration();
+def days_to_decay_target = Max(MIN_HOLD_TIME_DAYS, premium_to_burn / -Theta());
 
 def DAYS_PER_YEAR = 365;
 def WEEKS_PER_YEAR = 52;
-def active_days_per_year;
 def dte = GetDaysToExpiration();
 def is_weekly = dte <= 5;
 
+def active_days_per_year;
+def n_sales_per_year;
+
 if (is_weekly) {
+    # for weeklies, assume we're making at most 2 sales per week
     active_days_per_year = DAYS_PER_YEAR - (WEEKS_PER_YEAR * 2);
+    n_sales_per_year = Min(2*WEEKS_PER_YEAR, TIME_EFFICIENCY * (active_days_per_year / days_to_decay_target));
 } else {
-    active_days_per_year = 365;
+    # 100% activity is baseline assumption for longer-term options
+    active_days_per_year = DAYS_PER_YEAR;
+    n_sales_per_year = Min(WEEKS_PER_YEAR, TIME_EFFICIENCY * (active_days_per_year / days_to_decay_target));
 }
 
-# annualized rate assumes compounding returns
-def n_sales_per_year = TIME_EFFICIENCY * (active_days_per_year / days_to_decay_target);
 def annual_roc = Power(1 + adjusted_return_on_capital, n_sales_per_year) - 1;
 
 AddLabel(yes, AsText(100 * annual_roc, "%1$.2f%%"), color.green);
