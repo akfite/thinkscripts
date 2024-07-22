@@ -44,8 +44,13 @@ def premium_to_burn = PROFIT_TARGET * extrinsic_premium;
 def days_to_decay_target = Max(0, premium_to_burn / -Theta());
 # def days_to_expiry = GetDaysToExpiration();
 
+def DAYS_PER_YEAR = 365;
+def WEEKS_PER_YEAR = 52;
+def active_days_per_year = DAYS_PER_YEAR - (WEEKS_PER_YEAR * 2);
+def dte = GetDaysToExpiration();
+
 # annualized rate assumes compounding returns
-def n_sales_per_year = TIME_EFFICIENCY * (365 / days_to_decay_target);
+def n_sales_per_year = TIME_EFFICIENCY * (active_days_per_year / days_to_decay_target);
 def annual_roc = Power(1 + adjusted_return_on_capital, n_sales_per_year) - 1;
 
 AddLabel(yes, AsText(100 * annual_roc, "%1$.2f%%"), color.green);

@@ -5,9 +5,11 @@
 #
 
 # define constants
-def SPREAD_CROSSING_RATIO = 0.1; # assume we can do slightly better than the bid (0=sell to bid)
-def FEE_PER_CONTRACT = 0.45; # usually $0.65/contract unless you negotiate it
-def PUT_MARGIN_RATIO = 1; # [0-1]; 1 = no margin (value = Max(AVAILABLE_CASH / PUT_NOTIONAL_VALUE, 1))
+input SPREAD_CROSSING_RATIO = 0.1; # assume we can do slightly better than the bid (0=sell to bid)
+input FEE_PER_CONTRACT = 0.45; # usually $0.65/contract unless you negotiate it
+input PUT_MARGIN_RATIO = 1; # [0-1]; 1 = no margin (value = Max(AVAILABLE_CASH / PUT_NOTIONAL_VALUE, 1))
+input TIME_EFFICIENCY = 1; # expected percent of year spent with a contract active
+
 # not going to consider selling naked calls here
 
 # all further calculations are PER SHARE
@@ -35,8 +37,12 @@ if (IsPut()) {
 }
 
 # annualized rate assumes compounding returns
-def time_efficiency = 1; # [0-1]; percent of the year with a contract active
-def n_sales_per_year = time_efficiency * (365 / GetDaysToExpiration());
+def DAYS_PER_YEAR = 365;
+def WEEKS_PER_YEAR = 52;
+def active_days_per_year = DAYS_PER_YEAR - (WEEKS_PER_YEAR * 2);
+def dte = GetDaysToExpiration();
+
+def n_sales_per_year = time_efficiency * (active_days_per_year / dte);
 def annual_roc = Power(1 + return_on_capital, n_sales_per_year) - 1;
 
 AddLabel(yes, AsText(100 * annual_roc, "%1$.2f%%"), color.green);
