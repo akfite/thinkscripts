@@ -39,8 +39,15 @@ if (IsPut()) {
 # annualized rate assumes compounding returns
 def DAYS_PER_YEAR = 365;
 def WEEKS_PER_YEAR = 52;
-def active_days_per_year = DAYS_PER_YEAR - (WEEKS_PER_YEAR * 2);
+def active_days_per_year;
 def dte = GetDaysToExpiration();
+def is_weekly = dte <= 5;
+
+if (is_weekly) {
+    active_days_per_year = DAYS_PER_YEAR - (WEEKS_PER_YEAR * 2);
+} else {
+    active_days_per_year = 365;
+}
 
 def n_sales_per_year = time_efficiency * (active_days_per_year / dte);
 def annual_roc = Power(1 + return_on_capital, n_sales_per_year) - 1;
